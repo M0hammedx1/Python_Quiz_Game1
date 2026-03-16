@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Python Data Analysis Quiz</title>
+    
+    <style>
+        :root {
+            /* Green & Yellow Theme */
+            --sky-color: #0b2015; /* Dark Forest Green */
+            --sun-color: #ffe000; /* Bright Yellow */
+            --wave1-color: #2a7221; /* Rich Green */
+            --wave2-color: #1b4315; /* Deep Green */
+            --wave3-color: #c9b000; /* Darker Yellow/Gold */
+            --text-color: #ffffff;
+            --accent-color: #ffe000;
+            --correct-color: #00e676; /* Bright Success Green */
+            --wrong-color: #ff3d00;
+            --glass-bg: rgba(11, 32, 21, 0.85);
+            --glass-border: rgba(255, 224, 0, 0.3);
+            --puzzle-bg: #0d2b1c;
+        }    
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background-color: var(--sky-color);
+            height: 100vh;
+            height: 100dvh; 
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        /* --- CSS ART: Colorful Tech Theme --- */
+        .scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, #0b2015, #05100a);
+        }
+
+        /* Glowing Data Core */
+        .sun {
+            position: absolute;
+            top: 15%;
+            right: 20%;
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            border: 4px solid var(--sun-color);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--sun-color), inset 0 0 20px var(--sun-color);
+            animation: pulseCore 3s infinite alternate;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sun::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            background-color: var(--sun-color);
+            border-radius: 50%;
+            box-shadow: 0 0 50px var(--sun-color);
+        }
+
+        @keyframes pulseCore {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            100% { transform: scale(1.1) rotate(180deg); opacity: 1; box-shadow: 0 0 60px var(--sun-color), inset 0 0 40px var(--sun-color); }
+        }
+
+        /* Floating Code Brackets */
+        .cloud {
+            position: absolute;
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: monospace;
+            will-change: transform;
+        }
+        .c1 { top: 15%; left: -120px; animation: moveCloud 25s linear infinite; color: rgba(255, 224, 0, 0.15); }
+        .c1::before { content: '{ data }'; }
+        .c2 { top: 35%; left: -100px; animation: moveCloud 35s linear infinite 5s; transform: scale(1.5); color: rgba(0, 230, 118, 0.15); }
+        .c2::before { content: '[ 1, 2, 3 ]'; }
+        .c3 { top: 10%; left: -150px; animation: moveCloud 45s linear infinite 2s; color: rgba(201, 176, 0, 0.15); }
+        .c3::before { content: '< / >'; }
+
+        @keyframes moveCloud {
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(50vw) translateY(-20px); }
+            100% { transform: translateX(calc(100vw + 200px)) translateY(0); }
+        }
+
+        /* Data Waves */
+        .ground {
+            position: absolute;
+            bottom: -5%;
+            width: 120%;
+            left: -10%;
+            height: 35%;
+            background: var(--wave1-color);
+            z-index: 1;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            opacity: 0.8;
+            box-shadow: 0 -10px 40px rgba(42, 114, 33, 0.4);
+        }
+
+        .dune {
+            position: absolute;
+            bottom: -5%;
+            width: 110%;
+            left: -5%;
+            height: 25%;
+            background: var(--wave2-color);
+            z-index: 2;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding-bottom: 40px;
+            padding-right: 10vw;
+            box-shadow: 0 -10px 40px rgba(11, 32, 21, 0.6);
+        }
+
+        .dune-left {
+            position: absolute;
+            bottom: 0;
+            left: -10%;
+            background: var(--wave3-color);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            z-index: 3;
+            width: 80%;
+            height: 15%;
+            opacity: 0.9;
+            box-shadow: 0 -10px 40px rgba(201, 176, 0, 0.3);
+        }
+
+        /* Credits */
+        .sand-credits-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            opacity: 0.8;
+            pointer-events: none;
+            text-align: right;
+            z-index: 10;
+        }
+        .credit-line { color: var(--accent-color); text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
+        .credit-line.small { font-size: 1.1rem; font-weight: 300; margin-bottom: 2px; }
+        .credit-line.large { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- UI Elements --- */
+        .container {
+            width: 95%;
+            max-width: 800px;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            margin-bottom: 10vh; 
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(255, 224, 0, 0.4);
+            opacity: 0;
+            animation: slideInDown 0.8s ease forwards;
+        }
+        .main-title span { color: var(--accent-color); }
+
+        .sub-title {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #ddd;
+            margin-top: 15px;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: slideInUp 0.8s ease 0.3s forwards;
+            letter-spacing: 1px;
+        }
+
+        .btn-start {
+            background: linear-gradient(45deg, var(--wave1-color), var(--wave3-color));
+            color: #fff;
+            padding: 18px 60px;
+            font-size: 1.5rem;
+            border: 2px solid var(--accent-color);
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 224, 0, 0.2);
+            transition: all 0.3s ease;
+            font-weight: 700;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.6s forwards;
+        }
+        .btn-start:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(255, 224, 0, 0.4);
+        }
+
+        .quiz-interface {
+            display: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            position: relative;
+            margin-top: auto;
+            margin-bottom: auto;
+            max-height: 88vh; 
+            overflow-y: auto; 
+        }
+
+        .progress-bar-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px 20px 0 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 20px 0 0 0;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: #ccc;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #categoryLabel { color: var(--accent-color); }
+
+        .quiz-content-wrapper { transition: opacity 0.3s ease-in-out; opacity: 1; }
+        .quiz-content-wrapper.fade-out { opacity: 0; }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            color: var(--text-color);
+            min-height: 50px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* MCQ Options */
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+        }
+        .option-left { display: flex; align-items: center; }
+        .option-letter {
+            font-weight: 800;
+            margin-right: 15px;
+            color: #0b2015;
+            background: var(--accent-color);
+            width: 32px; height: 32px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 8px;
+            flex-shrink: 0; 
+        }
+        .status-icon {
+            font-size: 1.2rem; opacity: 0; transform: scale(0);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 800; flex-shrink: 0;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+        .option-btn.disabled { pointer-events: none; }
+        .option-btn.correct { background: rgba(0, 230, 118, 0.15); border-color: var(--correct-color); }
+        .option-btn.correct .option-letter { background: var(--correct-color); color: #000; }
+        .option-btn.correct .status-icon { opacity: 1; transform: scale(1); color: var(--correct-color); content: '✓'; }
+        .option-btn.correct .status-icon::after { content: '✓'; }
+
+        .option-btn.wrong { background: rgba(255, 61, 0, 0.15); border-color: var(--wrong-color); }
+        .option-btn.wrong .option-letter { background: var(--wrong-color); color: #fff; }
+        .option-btn.wrong .status-icon { opacity: 1; transform: scale(1); color: var(--wrong-color); }
+        .option-btn.wrong .status-icon::after { content: '✕'; }
+
+        /* Puzzle Options */
+        .puzzle-container { display: none; flex-direction: column; gap: 15px; }
+        .puzzle-zone {
+            min-height: 80px;
+            background: var(--puzzle-bg);
+            border: 2px dashed rgba(255, 224, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s;
+        }
+        .puzzle-zone.answer-zone { border-color: var(--accent-color); background: rgba(255, 224, 0, 0.05); }
+        .puzzle-zone.answer-zone.correct-zone { border-color: var(--correct-color); background: rgba(0, 230, 118, 0.1); border-style: solid; }
+        .puzzle-zone.answer-zone.wrong-zone { border-color: var(--wrong-color); background: rgba(255, 61, 0, 0.1); border-style: solid; }
+
+        .puzzle-piece {
+            background: linear-gradient(to bottom, #1b4315, #0b2015);
+            border: 1px solid var(--accent-color);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            /* Touch optimization */
+            touch-action: manipulation;
+        }
+        .puzzle-piece:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(255, 224, 0, 0.4); }
+        .puzzle-piece.disabled { pointer-events: none; opacity: 0.6; }
+
+        .puzzle-msg { font-size: 0.95rem; color: #ddd; margin-bottom: -5px; }
+
+        /* Puzzle Feedback Container */
+        .puzzle-feedback {
+            display: none;
+            margin-top: 5px;
+            padding: 12px 15px;
+            background: rgba(0, 230, 118, 0.15);
+            border: 1px solid var(--correct-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.05rem;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+        .puzzle-feedback span {
+            display: block;
+            margin-top: 5px;
+            color: var(--correct-color);
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.15rem;
+        }
+
+        /* Controls */
+        .controls { 
+            margin-top: 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .controls-center {
+            display: none; /* Shown only on puzzles */
+            gap: 10px;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .nav-btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s;
+            font-size: 1rem;
+            touch-action: manipulation;
+        }
+        .nav-btn:hover:not(:disabled) { border-color: var(--accent-color); background: rgba(255, 224, 0, 0.1); color: var(--accent-color); }
+        .nav-btn:disabled { opacity: 0.3; cursor: default; }
+        
+        /* Specific action buttons */
+        .action-btn { font-size: 0.95rem; padding: 10px 20px; }
+        #resetPuzzleBtn { border-color: #ff9800; color: #ff9800; }
+        #resetPuzzleBtn:hover { background: rgba(255, 152, 0, 0.1); }
+        #submitPuzzleBtn { background: var(--accent-color); color: #000; border: none; font-weight: bold; }
+        #submitPuzzleBtn:hover { background: #fff; transform: scale(1.05); }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
+            width: 100%;
+            border: 1px solid var(--glass-border);
+        }
+        .score-display {
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin: 15px 0;
+            text-shadow: 0 0 20px rgba(255, 224, 0, 0.5);
+            line-height: 1;
+        }
+
+        .sparkle-dot { position: fixed; border-radius: 50%; pointer-events: none; z-index: 99999; }
+
+        @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .main-title { font-size: 3rem; }
+            .sub-title { font-size: 1.1rem; }
+            .start-screen { margin-bottom: 20vh; }
+            .quiz-interface { padding: 20px 15px; width: 100%; }
+            .question-text { font-size: 1.15rem; margin-bottom: 15px;}
+            .option-btn { padding: 12px; font-size: 1rem; }
+            .option-letter { width: 30px; height: 30px; margin-right: 10px; font-size: 0.9rem; }
+            .dune { height: 30%; padding-right: 20px; padding-bottom: 20px; }
+            .credit-line.large { font-size: 1.3rem; }
+            .puzzle-piece { padding: 10px 14px; font-size: 1rem; }
+            .nav-btn { padding: 10px 18px; font-size: 0.9rem; }
+            .controls { gap: 8px; }
+            .controls-center { flex-basis: 100%; order: -1; margin-bottom: 10px; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="scene">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="ground"></div>
+    <div class="dune-left"></div>
+    <div class="dune">
+        <div class="sand-credits-container">
+            <span class="credit-line small">Developed By</span>
+            <span class="credit-line large">Mohamed Islam</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="start-screen" id="startScreen">
+        <h1 class="main-title">Data <span>Analysis</span></h1>
+        <h2 class="sub-title">Python for Beginners Quiz</h2>
+        <button class="btn-start" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div class="quiz-interface" id="quizInterface">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="header-info">
+            <span id="categoryLabel">Basics</span>
+            <span id="questionCount">1 / 22</span>
+        </div>
+        
+        <div class="quiz-content-wrapper" id="quizContent">
+            <div class="question-text" id="questionText">Question</div>
+            
+            <div class="options-grid" id="optionsGrid"></div>
+
+            <div class="puzzle-container" id="puzzleContainer">
+                <p class="puzzle-msg">Tap pieces to build the correct Python code:</p>
+                <div class="puzzle-zone answer-zone" id="puzzleAnswerZone"></div>
+                <div class="puzzle-zone" id="puzzlePoolZone"></div>
+                <div id="puzzleFeedback" class="puzzle-feedback"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="nav-btn" onclick="prevQuestion()" id="prevBtn" disabled>Back</button>
+            <div class="controls-center" id="puzzleControls">
+                <button class="nav-btn action-btn" id="resetPuzzleBtn" onclick="resetPuzzle()">Reset</button>
+                <button class="nav-btn action-btn primary" id="submitPuzzleBtn" onclick="checkPuzzle()">Submit</button>
+            </div>
+            <button class="nav-btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+        </div>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+        <h2>System Scan Complete!</h2>
+        <div class="score-display" id="finalScore">0</div>
+        <button class="btn-start" onclick="location.reload()" style="opacity:1; animation:none; font-size:1.2rem; padding:12px 40px;">Reboot System</button>
+    </div>
+</div>
+
+<script>
+    // 22 Questions (15 MCQ, 7 Puzzles)
+    const quizData = [
+        // MCQs
+        { type: 'mcq', part: "Concepts", q: "What is Data Analysis?", options: ["Playing video games", "Deleting files", "Extracting useful info from data", "Fixing computers"], correct: 2 },
+        { type: 'mcq', part: "Concepts", q: "Why is Python highly suitable for beginners?", options: ["It has a complex syntax", "It has a simple syntax", "It only works on old PCs", "It has no libraries"], correct: 1 },
+        { type: 'mcq', part: "Libraries", q: "Which Python library is used for scientific and mathematical calculations?", options: ["Pandas", "Matplotlib", "NumPy", "Seaborn"], correct: 2 },
+        { type: 'mcq', part: "Libraries", q: "Which library is mainly used for manipulating data tables?", options: ["Matplotlib", "NumPy", "Seaborn", "Pandas"], correct: 3 },
+        { type: 'mcq', part: "Libraries", q: "Which of these libraries is used for generating graphs and visual data?", options: ["Matplotlib", "NumPy", "Pandas", "Math"], correct: 0 },
+        { type: 'mcq', part: "Functions", q: "What does the function 'np.mean()' calculate?", options: ["The sum", "The average", "The largest number", "The smallest number"], correct: 1 },
+        { type: 'mcq', part: "Functions", q: "If you want to find the largest value in a dataset, you use:", options: ["np.min()", "np.max()", "np.mean()", "np.large()"], correct: 1 },
+        { type: 'mcq', part: "Functions", q: "If you want to find the smallest value, you use:", options: ["np.min()", "np.max()", "np.small()", "np.mean()"], correct: 0 },
+        { type: 'mcq', part: "Data Types", q: "Ages, prices, and weights are examples of which data type?", options: ["Date and Time", "Text Data", "Numerical Data", "Image Data"], correct: 2 },
+        { type: 'mcq', part: "Data Types", q: "Customer comments and articles are examples of:", options: ["Text Data", "Numerical Data", "Date Data", "Sound Data"], correct: 0 },
+        { type: 'mcq', part: "Data Types", q: "Purchase dates are analyzed under which data type?", options: ["Numerical", "Text", "Date and Time", "None of the above"], correct: 2 },
+        { type: 'mcq', part: "Concepts", q: "Text Data is often analyzed using NLP. What does NLP stand for?", options: ["Natural Language Processing", "New Line Programming", "Number Logic Python", "Network Local Port"], correct: 0 },
+        { type: 'mcq', part: "Functions", q: "Which Pandas function converts text into real dates?", options: ["pd.to_text()", "pd.to_number()", "pd.to_datetime()", "np.date()"], correct: 2 },
+        { type: 'mcq', part: "Concepts", q: "Data Analysis helps companies to make...", options: ["Bad choices", "No choices", "Slower networks", "Logical, fact-based decisions"], correct: 3 },
+        { type: 'mcq', part: "Concepts", q: "Python is highly compatible with Machine Learning and...", options: ["Artificial Intelligence (AI)", "Typing fast", "Cleaning screens", "Making coffee"], correct: 0 },
+        
+        // Puzzles (Standard) - Added displayAnswer for properly spaced feedback
+        { type: 'puzzle', part: "Code Builder", q: "Arrange the blocks to import the NumPy library:", pieces: ["import", "numpy", "as", "np"], answer: "importnumpyasnp", displayAnswer: "import numpy as np" },
+        { type: 'puzzle', part: "Code Builder", q: "Arrange the blocks to create a simple data list:", pieces: ["data", "=", "[10, 20, 30]"], answer: "data=[10, 20, 30]", displayAnswer: "data = [10, 20, 30]" },
+        { type: 'puzzle', part: "Code Builder", q: "Build the code to print the maximum value of 'data':", pieces: ["print(", "np.max(", "data", "))"], answer: "print(np.max(data))", displayAnswer: "print(np.max(data))" },
+        { type: 'puzzle', part: "Code Builder", q: "Build the code to print the average (mean) of 'data':", pieces: ["print(", "np.mean(", "data", "))"], answer: "print(np.mean(data))", displayAnswer: "print(np.mean(data))" },
+        
+        // Puzzles (Advanced / New) - Added displayAnswer
+        { type: 'puzzle', part: "Advanced Builder", q: "Build the code to filter 'data' and print only numbers greater than 10:", pieces: ["print(", "data[", "data", ">", "10", "])"], answer: "print(data[data>10])", displayAnswer: "print(data[data > 10])" },
+        { type: 'puzzle', part: "Advanced Builder", q: "Use Pandas to convert a list of strings into Date and Time format:", pieces: ["dates", "=", "pd.", "to_datetime(", "data", ")"], answer: "dates=pd.to_datetime(data)", displayAnswer: "dates = pd.to_datetime(data)" }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let userAnswers = new Array(quizData.length).fill(null); 
+    let isNavigating = false;
+
+    const el = {
+        start: document.getElementById('startScreen'),
+        quiz: document.getElementById('quizInterface'),
+        result: document.getElementById('resultScreen'),
+        content: document.getElementById('quizContent'),
+        qText: document.getElementById('questionText'),
+        opts: document.getElementById('optionsGrid'),
+        puzzleContainer: document.getElementById('puzzleContainer'),
+        puzzlePool: document.getElementById('puzzlePoolZone'),
+        puzzleAns: document.getElementById('puzzleAnswerZone'),
+        puzzleControls: document.getElementById('puzzleControls'),
+        puzzleFeedback: document.getElementById('puzzleFeedback'),
+        cat: document.getElementById('categoryLabel'),
+        count: document.getElementById('questionCount'),
+        prev: document.getElementById('prevBtn'),
+        next: document.getElementById('nextBtn'),
+        bar: document.getElementById('progressFill'),
+        score: document.getElementById('finalScore')
+    };
+
+    function startQuiz() {
+        el.start.style.display = 'none';
+        el.quiz.style.display = 'block';
+        el.quiz.style.animation = 'fadeIn 0.5s ease';
+        loadQuestion(0);
+    }
+
+    function loadQuestion(idx) {
+        if(isNavigating) return;
+        currentIdx = idx;
+        const data = quizData[currentIdx];
+
+        el.content.classList.add('fade-out');
+        
+        setTimeout(() => {
+            el.cat.textContent = data.part;
+            el.count.textContent = `Q ${idx + 1} / ${quizData.length}`;
+            el.qText.textContent = data.q;
+            el.bar.style.width = `${((idx + 1) / quizData.length) * 100}%`;
+            
+            if (data.type === 'mcq') {
+                el.opts.style.display = 'flex';
+                el.puzzleContainer.style.display = 'none';
+                el.puzzleControls.style.display = 'none';
+                renderMCQ(data, idx);
+            } else {
+                el.opts.style.display = 'none';
+                el.puzzleContainer.style.display = 'flex';
+                renderPuzzle(data, idx);
+            }
+            
+            el.prev.disabled = idx === 0;
+            updateNextBtnState();
+            
+            el.content.classList.remove('fade-out');
+        }, 250);
+    }
+
+    function renderMCQ(data, idx) {
+        el.opts.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D'];
+        
+        data.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `
+                <div class="option-left">
+                    <span class="option-letter">${letters[i]}</span>
+                    <span>${opt}</span>
+                </div>
+                <span class="status-icon"></span>
+            `;
+            btn.onclick = () => checkMCQ(i, btn);
+            el.opts.appendChild(btn);
+
+            if (userAnswers[idx] !== null) {
+                btn.classList.add('disabled');
+                if (i === data.correct) btn.classList.add('correct');
+                else if (userAnswers[idx] === i) btn.classList.add('wrong');
+            }
+        });
+    }
+
+    function checkMCQ(selected, btn) {
+        if (userAnswers[currentIdx] !== null) return;
+        
+        userAnswers[currentIdx] = selected;
+        const correct = quizData[currentIdx].correct;
+        const allBtns = el.opts.querySelectorAll('.option-btn');
+
+        allBtns.forEach(b => b.classList.add('disabled'));
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score++;
+            spawnFullPageSparkles();
+        } else {
+            btn.classList.add('wrong');
+            allBtns[correct].classList.add('correct');
+        }
+    }
+
+    function renderPuzzle(data, idx) {
+        el.puzzlePool.innerHTML = '';
+        el.puzzleAns.innerHTML = '';
+        el.puzzleAns.className = 'puzzle-zone answer-zone'; 
+        el.puzzleFeedback.style.display = 'none';
+        
+        if (userAnswers[idx] !== null) {
+            // Already answered - Hide controls
+            el.puzzleControls.style.display = 'none';
+            data.pieces.forEach(p => createPuzzlePiece(p, el.puzzleAns, true));
+            if (userAnswers[idx] === true) {
+                el.puzzleAns.classList.add('correct-zone');
+            } else {
+                el.puzzleAns.classList.add('wrong-zone');
+                // Show properly spaced answer if they got it wrong previously
+                el.puzzleFeedback.innerHTML = `Correct Answer: <span>${data.displayAnswer}</span>`;
+                el.puzzleFeedback.style.display = 'block';
+            }
+        } else {
+            // New puzzle - Show controls
+            el.puzzleControls.style.display = 'flex';
+            let shuffled = [...data.pieces].sort(() => Math.random() - 0.5);
+            shuffled.forEach(p => createPuzzlePiece(p, el.puzzlePool, false));
+        }
+    }
+
+    function createPuzzlePiece(text, parent, disabled) {
+        const div = document.createElement('div');
+        div.className = 'puzzle-piece';
+        if (disabled) div.classList.add('disabled');
+        div.textContent = text;
+        div.onclick = () => movePiece(div);
+        parent.appendChild(div);
+    }
+
+    function movePiece(piece) {
+        if (piece.parentElement === el.puzzlePool) {
+            el.puzzleAns.appendChild(piece);
+        } else {
+            el.puzzlePool.appendChild(piece);
+        }
+    }
+
+    function resetPuzzle() {
+        if (userAnswers[currentIdx] !== null) return; // Can't reset after submitting
+        const pieces = Array.from(el.puzzleAns.children);
+        pieces.forEach(p => el.puzzlePool.appendChild(p));
+    }
+
+    function checkPuzzle() {
+        if (userAnswers[currentIdx] !== null) return;
+        
+        const piecesInAnswer = Array.from(el.puzzleAns.children);
+        if (piecesInAnswer.length === 0) return; // Prevent empty submission
+
+        const currentAnswer = piecesInAnswer.map(p => p.textContent).join('');
+        const isCorrect = currentAnswer === quizData[currentIdx].answer;
+
+        userAnswers[currentIdx] = isCorrect;
+        
+        // Disable pieces
+        Array.from(el.puzzleAns.children).forEach(p => p.classList.add('disabled'));
+        Array.from(el.puzzlePool.children).forEach(p => p.classList.add('disabled'));
+
+        el.puzzleControls.style.display = 'none';
+
+        if (isCorrect) {
+            el.puzzleAns.classList.add('correct-zone');
+            score++;
+            spawnFullPageSparkles();
+        } else {
+            el.puzzleAns.classList.add('wrong-zone');
+            // Show properly spaced correct answer feedback
+            el.puzzleFeedback.innerHTML = `Correct Answer: <span>${quizData[currentIdx].displayAnswer}</span>`;
+            el.puzzleFeedback.style.display = 'block';
+        }
+        updateNextBtnState();
+    }
+
+    function updateNextBtnState() {
+        el.next.textContent = currentIdx === quizData.length - 1 ? 'Finish' : 'Next';
+    }
+
+    function nextQuestion() {
+        if (currentIdx < quizData.length - 1) loadQuestion(currentIdx + 1);
+        else showResult();
+    }
+
+    function prevQuestion() {
+        if (currentIdx > 0) loadQuestion(currentIdx - 1);
+    }
+
+    function showResult() {
+        el.quiz.style.display = 'none';
+        el.result.style.display = 'block';
+        el.score.textContent = `${score} / ${quizData.length}`;
+        
+        for(let i=0; i<5; i++) {
+            setTimeout(() => { spawnFullPageSparkles(); }, i*400);
+        }
+    }
+
+    // Optimized for Mobile (Fewer particles to prevent lag)
+    function spawnFullPageSparkles() {
+        const isMobile = window.innerWidth < 600;
+        const count = isMobile ? 12 : 30; // Reduced for performance
+        const colors = ['#ffe000', '#00e676', '#2a7221', '#ffffff'];
+        
+        for (let i = 0; i < count; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'sparkle-dot';
+            document.body.appendChild(dot);
+
+            const size = Math.random() * 8 + 4;
+            dot.style.width = size + 'px';
+            dot.style.height = size + 'px';
+            dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            dot.style.boxShadow = `0 0 10px ${dot.style.backgroundColor}`;
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            dot.style.left = startX + 'px';
+            dot.style.top = startY + 'px';
+
+            const tx = (Math.random() - 0.5) * (isMobile ? 200 : 300); 
+            const ty = (Math.random() - 0.5) * (isMobile ? 200 : 300);
+
+            dot.animate([
+                { transform: 'translate(0,0) scale(0)', opacity: 0 },
+                { transform: 'translate(0,0) scale(1)', opacity: 1, offset: 0.1 },
+                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000 + Math.random() * 800,
+                easing: 'cubic-bezier(0, .9, .57, 1)'
+            }).onfinish = () => dot.remove();
+        }
+    }
+</script>
+</body>
+</html>
